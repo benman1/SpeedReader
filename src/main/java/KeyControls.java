@@ -5,11 +5,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 class KeyControls implements KeyListener {
-    private static Logger logger = LoggerFactory.getLogger(TextReader.class);
+    private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
 
-    private final TextReader timerTime;
+    private final SpeedReader timerTime;
 
-    public KeyControls(TextReader timerTime) {
+    public KeyControls(SpeedReader timerTime) {
         this.timerTime = timerTime;
     }
 
@@ -48,7 +48,6 @@ class KeyControls implements KeyListener {
                         || key == KeyEvent.VK_RIGHT_PARENTHESIS
                         || key == KeyEvent.VK_PERIOD
         ) {
-            logger.info("Faster requested");
             timerTime.adaptSpeed(-10);
         }
 
@@ -59,9 +58,17 @@ class KeyControls implements KeyListener {
                     || key == KeyEvent.VK_LEFT_PARENTHESIS
                     || key == KeyEvent.VK_COMMA
         ) {
-            logger.info("Slower requested");
             timerTime.adaptSpeed(+10);
         }
+
+        if (key == KeyEvent.VK_P) {
+            timerTime.nextChapter(-1);
+        }
+
+        if (key == KeyEvent.VK_N) {
+            timerTime.nextChapter(1);
+        }
+
     }
 
     @Override

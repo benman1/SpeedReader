@@ -11,7 +11,7 @@ import java.io.*;
 
 
 public class BookReader {
-    private static Logger logger = LoggerFactory.getLogger(TextReader.class);
+    private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
 
     Book readBook;
     String title;
@@ -45,10 +45,6 @@ public class BookReader {
 
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
 }

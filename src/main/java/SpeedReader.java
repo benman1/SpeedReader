@@ -3,20 +3,24 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
+
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TextReader extends JPanel implements ActionListener {
-    private static Logger logger = LoggerFactory.getLogger(TextReader.class);
+public class SpeedReader extends JPanel implements ActionListener {
+    private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
 
-    private final String[] words;
+    private String[] words;
     private final Timer timer;
+    private final BookReader bookReader;
     private int currWord;
     private JLabel timeLabel;
     private boolean paused;
     private int delay = 1000;
     private int pause = 1000;
+    private int currChapter = 0;
+    private JFrame frame;
 
     public void rewind() {
         currWord = currWord - 2;
@@ -44,9 +48,15 @@ public class TextReader extends JPanel implements ActionListener {
         timeLabel.setText(words[currWord]);
     }
 
-    public TextReader(String text) {
+
+
+    public SpeedReader(String bookFileName, int chapter, int speed) {
+        this.currChapter = chapter;
+        this.delay = 60000 / speed;
+        bookReader = new BookReader(bookFileName);
+        String text = bookReader.getChapter(currChapter);
         this.words = text.split("\\s+");
-        createWindow();
+        createWindow(bookReader.getTitle());
         timeLabel = new JLabel(this.words[this.currWord]);
         timeLabel.setHorizontalAlignment(JLabel.CENTER);
         timeLabel.setFont(new Font(timeLabel.getFont().getName(), Font.PLAIN, 30));
@@ -73,9 +83,8 @@ public class TextReader extends JPanel implements ActionListener {
         }
     }
 
-
-    private void createWindow() {
-        JFrame frame = new JFrame("TextReader");
+    private void createWindow(String bookTitle) {
+        frame = new JFrame("SpeedReader: " + bookTitle + " - chapter " + currChapter);
         frame.setSize(350, 75);
         JFrame.setDefaultLookAndFeelDecorated(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,7 +93,15 @@ public class TextReader extends JPanel implements ActionListener {
         frame.setLocationByPlatform(true);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
 
+    public void nextChapter(int i) {
+        currChapter = currChapter + i;
+        String text = bookReader.getChapter(currChapter);
+        this.words = text.split("\\s+");
+        this.restart();
+        logger.info("Current chapter: " + currChapter);
+        frame.setTitle("SpeedReader: " + bookReader.getTitle() + " - chapter " + currChapter);
     }
 
     public boolean isPaused() {
@@ -107,7 +124,7 @@ public class TextReader extends JPanel implements ActionListener {
         options.addOption(speed);
 
         final Option chapter = new Option("c", "chapter", true, "chapter");
-        chapter.setRequired(true);
+        chapter.setRequired(false);
         options.addOption(chapter);
 
         CommandLineParser parser = new DefaultParser();
@@ -123,12 +140,15 @@ public class TextReader extends JPanel implements ActionListener {
             System.exit(1);
         }
 
-        BookReader bookReader = new BookReader(cmd.getOptionValue("book"));
-        new TextReader(bookReader.getChapter(Integer.parseInt(cmd.getOptionValue("chapter"))));
+            new SpeedReader(
+                    cmd.getOptionValue("book"),
+                    Integer.parseInt(cmd.getOptionValue("chapter","0")),
+                    Integer.parseInt(cmd.getOptionValue("speed", "60"))
+            );
     }
 
     public void adaptSpeed(int i) {
         timer.setDelay(timer.getDelay() + i);
-        logger.info("New speed: " + timer.getDelay());
+        logger.info("New speed: " + 60000 / timer.getDelay() + " words per minute");
     }
 }
