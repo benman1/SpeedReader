@@ -69,6 +69,10 @@ class KeyControls implements KeyListener {
             timerTime.nextChapter(1);
         }
 
+        if (key == KeyEvent.VK_B) {
+            timerTime.openBook(null);
+        }
+
     }
 
     @Override

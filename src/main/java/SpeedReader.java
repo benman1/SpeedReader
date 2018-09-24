@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +18,7 @@ public class SpeedReader extends JPanel implements ActionListener {
 
     private String[] words;
     private final Timer timer;
-    private final BookReader bookReader;
+    private BookReader bookReader;
     private int currWord;
     private JLabel timeLabel;
     private boolean paused;
@@ -33,6 +35,19 @@ public class SpeedReader extends JPanel implements ActionListener {
         }
         timeLabel.setText(words[currWord]);
         pbar.setValue(currWord);
+    }
+
+    private String chooseBook() {
+        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        jfc.setDialogTitle("Select a book to read");
+        jfc.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("epub files", "epub");
+        jfc.addChoosableFileFilter(fileNameExtensionFilter);
+        int returnValue = jfc.showOpenDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            return jfc.getSelectedFile().getPath();
+        }
+        return null;
     }
 
     public void forward() {
@@ -56,12 +71,18 @@ public class SpeedReader extends JPanel implements ActionListener {
         pbar.setValue(currWord);
     }
 
-    public SpeedReader(String bookFileName, int chapter, int speed) {
-        this.currChapter = chapter;
-        this.delay = 60000 / speed;
+    public void openBook(String bookFileName) {
+        bookFileName = (bookFileName == null) ? chooseBook() : bookFileName;
         bookReader = new BookReader(bookFileName);
+        currChapter = 0;
         String text = bookReader.getChapter(currChapter);
         this.words = text.split("\\s+");
+        this.currWord = 0;
+    }
+
+    public SpeedReader(String bookFileName, int speed) {
+        this.delay = 60000 / speed;
+        openBook(bookFileName);
         createWindow(bookReader.getTitle());
         timeLabel = new JLabel(this.words[this.currWord]);
         timeLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -132,16 +153,12 @@ public class SpeedReader extends JPanel implements ActionListener {
         Options options = new Options();
 
         Option book = new Option("b", "book", true, "epub book file");
-        book.setRequired(true);
+        book.setRequired(false);
         options.addOption(book);
 
         Option speed = new Option("s", "speed", true, "words per minute");
         speed.setRequired(false);
         options.addOption(speed);
-
-        final Option chapter = new Option("c", "chapter", true, "chapter");
-        chapter.setRequired(false);
-        options.addOption(chapter);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -157,8 +174,7 @@ public class SpeedReader extends JPanel implements ActionListener {
         }
 
             new SpeedReader(
-                    cmd.getOptionValue("book"),
-                    Integer.parseInt(cmd.getOptionValue("chapter","0")),
+                    cmd.getOptionValue("book", null),
                     Integer.parseInt(cmd.getOptionValue("speed", "60"))
             );
     }

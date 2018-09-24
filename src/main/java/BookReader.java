@@ -7,6 +7,9 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 
 
@@ -17,6 +20,8 @@ public class BookReader {
     String title;
 
     public BookReader(String bookFileName) {
+        if(bookFileName == null) {
+        }
         try {
             readBook = new EpubReader().readEpub(new FileInputStream(bookFileName), Constants.CHARACTER_ENCODING);
             title = readBook.getTitle();
