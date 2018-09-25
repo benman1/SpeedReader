@@ -7,9 +7,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 
 
@@ -20,8 +17,6 @@ public class BookReader {
     String title;
 
     public BookReader(String bookFileName) {
-        if(bookFileName == null) {
-        }
         try {
             readBook = new EpubReader().readEpub(new FileInputStream(bookFileName), Constants.CHARACTER_ENCODING);
             title = readBook.getTitle();
@@ -31,17 +26,13 @@ public class BookReader {
         }
     }
 
-    private String stripHTML(String text) {
-        return text.replaceAll("<[^>]+>", "").replaceAll("\\{[^\\}]+\\}", "");
-    }
-
-    public String getChapter(int chapter) {
+    public Chapter getChapter(int chapter) {
         TableOfContents contents = readBook.getTableOfContents();
         try {
             Resource resource = contents.getAllUniqueResources().get(chapter);
             String text = IOUtils.toString(resource.getReader());
             logger.info("Chapter title: " + resource.getTitle());
-            return stripHTML(text);
+            return new Chapter(text, resource.getTitle());
         } catch (IOException e) {
             e.printStackTrace();
             return null;

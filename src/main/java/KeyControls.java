@@ -22,19 +22,19 @@ class KeyControls implements KeyListener {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_LEFT) {
-            timerTime.rewind();
+            timerTime.getChapter().rewind();
         }
 
         if (key == KeyEvent.VK_RIGHT) {
-            timerTime.forward();
+            timerTime.getChapter().forward();
         }
 
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_BEGIN) {
-            timerTime.restart();
+            timerTime.getChapter().restart();
         }
 
         if (key == KeyEvent.VK_DOWN || key == KeyEvent.VK_END) {
-            timerTime.finish();
+            timerTime.getChapter().finish();
         }
 
         if (key == KeyEvent.VK_SPACE) {
