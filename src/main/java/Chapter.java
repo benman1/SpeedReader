@@ -64,15 +64,13 @@ public class Chapter {
      * Strips HTML and JSON from text
      */
     private String stripHTML(String text) {
-        return text.replaceAll("<[^>]+>", "").replaceAll("\\{[^\\}]+\\}", "");
+        return text.replaceAll("<[^>]+>", " ").replaceAll("\\{[^\\}]+\\}", " ");
     }
 
 
     private String getCurrWord() {
         if(currWord < 0) currWord = 0;
         if(currWord < this.words.size()) {
-            System.out.println(currWord);
-            System.out.println(words.size());
             pbar.setValue(currWord);
             return this.words.get(currWord);
         }

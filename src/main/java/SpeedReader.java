@@ -139,9 +139,8 @@ public class SpeedReader extends JPanel implements ActionListener {
         try {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
             formatter.printHelp("utility-name", options);
-
             System.exit(1);
         }
 
