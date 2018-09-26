@@ -14,4 +14,10 @@ Recognises sentence breaks in order to slow down for a moment.
 
 Compile in maven. Give optional command line arguments for book and initial speed.
 
+## TODO
+* Make sure window is broad enough to accommodate all words.
+* Font-size to be configurable.
+* Skip table of content resources that are not XML/HTML.
+* Read books in formats other than epub.
+
 Pull requests appreciated.
