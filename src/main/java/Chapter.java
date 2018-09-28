@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,7 +80,7 @@ public class Chapter {
         this.title = title;
         tokenizeText(text);
         this.currWord = 0;
-        pbar.setMaximum(words.size());
+        pbar.setMaximum(words.size()-1);
         pbar.setValue(0);
         timeLabel = new JLabel(getCurrWord());
         timeLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -99,17 +98,17 @@ public class Chapter {
     }
 
     public void next(SpeedReader speedReader) {
-        forward();
         if(sentenceBreaks.contains(currWord))
-            if(!justStopped) {
+            if(!justStopped) {  // sentence breaks
                 currWord--;
                 this.justStopped = true;
             } else justStopped = false;
+        forward();
     }
 
     public void forward() {
         currWord++;
-        if(currWord > words.size() - 1) {
+        if(currWord >= words.size()) {
             currWord = words.size() - 1;
         }
         timeLabel.setText(getCurrWord());

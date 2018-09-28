@@ -6,6 +6,8 @@ import java.awt.event.KeyListener;
 
 class KeyControls implements KeyListener {
     private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
+    private int forwardedBefore = 0;
+    private int rewindedBefore = 0;
 
     private final SpeedReader timerTime;
 
@@ -22,11 +24,17 @@ class KeyControls implements KeyListener {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_LEFT) {
-            timerTime.getChapter().rewind();
+            for(int i=0; i<(1 + rewindedBefore / 5); i++) timerTime.getChapter().rewind();
+            rewindedBefore += 1;
+        } else {
+            rewindedBefore = 0;
         }
 
         if (key == KeyEvent.VK_RIGHT) {
-            timerTime.getChapter().forward();
+            for(int i=0; i<(1 + forwardedBefore / 5); i++) timerTime.getChapter().forward();
+            forwardedBefore += 1;
+        } else {
+            forwardedBefore = 0;
         }
 
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_BEGIN) {
@@ -77,6 +85,13 @@ class KeyControls implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
+    }
 
+    public int getRewindedBefore() {
+        return rewindedBefore;
+    }
+
+    public int getForwardedBefore() {
+        return forwardedBefore;
     }
 }
