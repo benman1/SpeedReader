@@ -1,8 +1,12 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 
 class KeyControls implements KeyListener {
     private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
@@ -26,15 +30,11 @@ class KeyControls implements KeyListener {
         if (key == KeyEvent.VK_LEFT) {
             for(int i=0; i<(1 + rewindedBefore / 5); i++) timerTime.getChapter().rewind();
             rewindedBefore += 1;
-        } else {
-            rewindedBefore = 0;
         }
 
         if (key == KeyEvent.VK_RIGHT) {
             for(int i=0; i<(1 + forwardedBefore / 5); i++) timerTime.getChapter().forward();
             forwardedBefore += 1;
-        } else {
-            forwardedBefore = 0;
         }
 
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_BEGIN) {
@@ -81,10 +81,27 @@ class KeyControls implements KeyListener {
             timerTime.openBook(null);
         }
 
+        if (key == KeyEvent.VK_Q) {
+            System.exit(0);
+        }
+
+        if (key == KeyEvent.VK_C) {
+            try {
+                String data = (String) Toolkit.getDefaultToolkit()
+                        .getSystemClipboard().getData(DataFlavor.stringFlavor);
+                timerTime.setChapter(new Chapter(data, "Clipboard"));
+            } catch (UnsupportedFlavorException | IOException e1) {
+                e1.printStackTrace();
+            }
+
+        }
+
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        rewindedBefore = 0;
+        forwardedBefore = 0;
     }
 
     public int getRewindedBefore() {

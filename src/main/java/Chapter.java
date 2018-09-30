@@ -20,12 +20,16 @@ public class Chapter {
 
     List<String> words = new ArrayList<>();
     List<Integer> sentenceBreaks = new ArrayList<>();
-    String title;
+    private String title;
     private int currWord;
     private JProgressBar pbar = initProgressBar();
     private JLabel timeLabel;
     private boolean justStopped = true;
     private SpeedReader speedReader;
+
+    public String getTitle() {
+        return title;
+    }
 
     public void register(SpeedReader speedReader) {
         this.speedReader = speedReader;
@@ -36,8 +40,10 @@ public class Chapter {
     @Override
     public void finalize() {
         logger.info("Chapter instance is getting destroyed");
-        speedReader.remove(timeLabel);
-        speedReader.getFrame().getContentPane().remove(pbar);
+        if(speedReader != null) {
+            speedReader.remove(timeLabel);
+            speedReader.getFrame().getContentPane().remove(pbar);
+        }
     }
 
     public JLabel getTimeLabel() {
@@ -138,7 +144,7 @@ public class Chapter {
         for(CoreMap sentence:sentences){
             List<CoreLabel> labels = sentence.get(CoreAnnotations.TokensAnnotation.class);
             String originalString = edu.stanford.nlp.ling.SentenceUtils.listToOriginalTextString(labels);
-            String[] tokens = originalString.split("\\s+");
+            String[] tokens = originalString.replace('\u2014', ' ').split("[\\s]+");  // \p{Pd}
             count += tokens.length;
             words.addAll(Arrays.asList(tokens));
             sentenceBreaks.add(count);

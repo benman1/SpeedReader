@@ -3,12 +3,13 @@ import java.awt.*;
 
 public class Window extends JFrame {
 
-    public static final int fontSize = 40;
-    public static final int width = fontSize * 10;
+    static final int fontSize = 40;
+    static final int width = fontSize * 15;
+    private static final int height = (int) (fontSize * 2.5);
 
     public Window(String title) throws HeadlessException {
         super(title);
-        this.setSize(width, (int) (fontSize * 4));
+        this.setSize(width, height);
         JFrame.setDefaultLookAndFeelDecorated(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationByPlatform(true);

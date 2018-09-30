@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
+import java.io.File;
 
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -12,42 +13,45 @@ import org.slf4j.LoggerFactory;
 
 public class SpeedReader extends JPanel implements ActionListener {
     private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
+    private final Timer timer;
+    private BookReader bookReader;
+    private boolean paused;
+    private int delay = 1000;
+    private int pause = 1000;
+    private int currChapter = 0;
+    private JFrame frame;
+    private Chapter chapter;
 
     public Timer getTimer() {
         return timer;
     }
 
-    private final Timer timer;
-    private BookReader bookReader;
-    private boolean paused;
-
     public int getDelay() {
         return delay;
     }
-
-    private int delay = 1000;
-    private int pause = 1000;
-    private int currChapter = 0;
 
     public JFrame getFrame() {
         return frame;
     }
 
-    private JFrame frame;
-    private Chapter chapter;
-
     public Chapter getChapter() {
         return chapter;
     }
 
+    public void setChapter(Chapter chapter) {
+        if(this.chapter!=null) this.chapter.finalize();
+        currChapter = 0;
+        this.chapter = chapter;
+        this.chapter.register(this);
+    }
+
     private String chooseBook() {
-        JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        JFileChooser jfc = new JFileChooser(new File(FileSystemView.getFileSystemView().getHomeDirectory(), "Downloads"));
         jfc.setDialogTitle("Select a book to read");
         jfc.setAcceptAllFileFilterUsed(false);
         FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("epub files", "epub");
         jfc.addChoosableFileFilter(fileNameExtensionFilter);
         int returnValue = jfc.showOpenDialog(null);
-        System.out.println(returnValue);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             return jfc.getSelectedFile().getPath();
         }
@@ -57,10 +61,7 @@ public class SpeedReader extends JPanel implements ActionListener {
     public void openBook(String bookFileName) {
         bookFileName = (bookFileName == null) ? chooseBook() : bookFileName;
         bookReader = new BookReader(bookFileName);
-        if(chapter!=null) chapter.finalize();
-        currChapter = 0;
-        chapter = bookReader.getChapter(currChapter);
-        chapter.register(this);
+        setChapter(bookReader.getChapter(currChapter));
         frame.setTitle("SpeedReader: " + bookReader.getTitle() + " - chapter " + currChapter);
     }
 
@@ -106,11 +107,10 @@ public class SpeedReader extends JPanel implements ActionListener {
 
     public void nextChapter(int i) {
         currChapter = currChapter + i;
-        if(chapter!=null) chapter.finalize();
-        chapter = bookReader.getChapter(currChapter);
-        chapter.register(this);
+        setChapter(bookReader.getChapter(currChapter));
         logger.info("Current chapter: " + currChapter);
-        frame.setTitle("SpeedReader: " + bookReader.getTitle() + " - chapter " + currChapter);
+        frame.setTitle(bookReader.getTitle() + " - " + chapter.getTitle());
+        chapter.restart();
     }
 
     public boolean isPaused() {
