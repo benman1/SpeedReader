@@ -28,8 +28,6 @@ public class BookReader {
             for(Resource resource: contents.getAll()){
                 if(resource.getMediaType().equals(MediatypeService.XHTML)) {
                     chapters.add(resource);
-                } else {
-                    System.out.println(resource.getMediaType());
                 }
             }
             logger.info("Book title: " + title);
@@ -41,7 +39,8 @@ public class BookReader {
 
     public Chapter getChapter(int chapter) {
         try {
-            if(chapter >= chapters.size()) { chapter = chapters.size() - 1; }
+            if(chapter >= chapters.size()) chapter = chapters.size() - 1;
+            else if(chapter < 0) chapter = 0;
             Resource resource = chapters.get(chapter);
             String text = IOUtils.toString(resource.getReader());
             logger.info("Chapter title: " + resource.getTitle());
