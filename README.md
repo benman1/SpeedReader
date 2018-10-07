@@ -16,15 +16,15 @@ Keyboard commands are as follows:
 * quit - q
 
 ## Features
-Recognises sentence breaks in order to slow down for a moment. 
+Recognises sentence breaks (in English texts) in order to slow down at each end of a sentence.
 
 ## Installation and running
 Compile in maven. Give optional command line arguments for book and initial speed.
 
 ## TODO
 * Help window with all keyboard shortcuts.
-* Font-size to be configurable.
-* Read books in formats other than epub.
-* Simplify class inter-dependencies (or just make them static)
+* Font-size to be configurable (configuration file?).
+* Read books in formats other than epub (e.g. tika or other ebook library?).
+* Show time left or estimated time of completion for book/chapter?
 
 Pull requests appreciated.

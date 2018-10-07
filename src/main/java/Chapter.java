@@ -18,8 +18,8 @@ import static java.awt.Component.BOTTOM_ALIGNMENT;
 public class Chapter {
     private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
 
-    List<String> words = new ArrayList<>();
-    List<Integer> sentenceBreaks = new ArrayList<>();
+    private List<String> words = new ArrayList<>();
+    private List<Integer> sentenceBreaks = new ArrayList<>();
     private String title;
     private int currWord;
     private JProgressBar pbar = initProgressBar();

@@ -9,15 +9,14 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 public class BookReader {
     private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
 
-    Book readBook;
-    String title;
-    List<Resource> chapters;
+    private Book readBook;
+    private String title;
+    private List<Resource> chapters;
 
     public BookReader(String bookFileName) {
         try {
@@ -39,8 +38,14 @@ public class BookReader {
 
     public Chapter getChapter(int chapter) {
         try {
-            if(chapter >= chapters.size()) chapter = chapters.size() - 1;
-            else if(chapter < 0) chapter = 0;
+            if(chapter >= chapters.size()) {
+                chapter = chapters.size() - 1;
+                logger.info("Reached the end of the book!");
+            }
+            else if(chapter < 0) {
+                logger.info("Can't go back beyond first chapter!");
+                chapter = 0;
+            }
             Resource resource = chapters.get(chapter);
             String text = IOUtils.toString(resource.getReader());
             logger.info("Chapter title: " + resource.getTitle());

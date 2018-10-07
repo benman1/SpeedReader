@@ -40,7 +40,6 @@ public class SpeedReader extends JPanel implements ActionListener {
 
     public void setChapter(Chapter chapter) {
         if(this.chapter!=null) this.chapter.finalize();
-        currChapter = 0;
         this.chapter = chapter;
         this.chapter.register(this);
     }
@@ -60,9 +59,10 @@ public class SpeedReader extends JPanel implements ActionListener {
 
     public void openBook(String bookFileName) {
         bookFileName = (bookFileName == null) ? chooseBook() : bookFileName;
-        bookReader = new BookReader(bookFileName);
-        setChapter(bookReader.getChapter(currChapter));
-        frame.setTitle("SpeedReader: " + bookReader.getTitle() + " - chapter " + currChapter);
+        logger.info("Opening book: " + bookFileName);
+        this.bookReader = new BookReader(bookFileName);
+        setChapter(bookReader.getChapter(this.currChapter));
+        frame.setTitle("SpeedReader: " + this.bookReader.getTitle() + " - chapter " + this.currChapter);
     }
 
     public SpeedReader(String bookFileName, int speed) {
@@ -78,7 +78,7 @@ public class SpeedReader extends JPanel implements ActionListener {
     }
 
     public void paint(Graphics g) {
-        super.paint(g);  // fixes the immediate problem.
+        super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.RED);
         Line2D lin = new Line2D.Float(
@@ -106,10 +106,10 @@ public class SpeedReader extends JPanel implements ActionListener {
     }
 
     public void nextChapter(int i) {
-        currChapter = currChapter + i;
-        setChapter(bookReader.getChapter(currChapter));
-        logger.info("Current chapter: " + currChapter);
-        frame.setTitle(bookReader.getTitle() + " - " + chapter.getTitle());
+        this.currChapter = this.currChapter + i;
+        setChapter(bookReader.getChapter(this.currChapter));
+        logger.info("Current chapter: " + this.currChapter);
+        frame.setTitle(bookReader.getTitle() + " - " + this.chapter.getTitle());
         chapter.restart();
     }
 
