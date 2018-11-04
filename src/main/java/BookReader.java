@@ -14,18 +14,17 @@ import java.util.List;
 public class BookReader {
     private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
 
-    private Book readBook;
     private String title;
     private List<Resource> chapters;
 
     public BookReader(String bookFileName) {
         try {
-            readBook = new EpubReader().readEpub(new FileInputStream(bookFileName), Constants.CHARACTER_ENCODING);
+            Book readBook = new EpubReader().readEpub(new FileInputStream(bookFileName), Constants.CHARACTER_ENCODING);
             title = readBook.getTitle();
-            Resources contents = readBook.getResources();
+            List<Resource> contents = readBook.getContents();
             chapters = new ArrayList<>();
-            for(Resource resource: contents.getAll()){
-                if(resource.getMediaType().equals(MediatypeService.XHTML)) {
+            for(Resource resource: contents){
+                if(resource.getMediaType()!= null && resource.getMediaType().equals(MediatypeService.XHTML)) {
                     chapters.add(resource);
                 }
             }

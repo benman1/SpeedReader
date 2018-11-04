@@ -27,6 +27,5 @@ Compile in maven. Give optional command line arguments for book and initial spee
 * Read books in formats other than epub (e.g. tika or other ebook library?).
 * Show time left or estimated time of completion for book/chapter?
 * On new chapter, even if not playing, update to show the first word.
-* Order chapters by TOC.
 
 Pull requests appreciated.
