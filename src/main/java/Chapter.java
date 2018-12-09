@@ -137,14 +137,17 @@ public class Chapter {
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-        Annotation document = new Annotation(stripHTML(paragraph));
+        Annotation document = new Annotation(stripHTML(paragraph).trim());
         pipeline.annotate(document);
         List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
         int count = 0;
         for(CoreMap sentence:sentences){
             List<CoreLabel> labels = sentence.get(CoreAnnotations.TokensAnnotation.class);
             String originalString = edu.stanford.nlp.ling.SentenceUtils.listToOriginalTextString(labels);
-            String[] tokens = originalString.replace('\u2014', ' ').split("[\\s]+");  // \p{Pd}
+            String[] tokens = originalString
+                    .replace('\u2014', ' ')
+                    .replace("\\p{Pd}", " ")
+                    .split("[\\s]+");
             count += tokens.length;
             words.addAll(Arrays.asList(tokens));
             sentenceBreaks.add(count);
