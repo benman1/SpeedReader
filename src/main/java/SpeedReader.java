@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class SpeedReader extends JPanel implements ActionListener {
     private static Logger logger = LoggerFactory.getLogger(SpeedReader.class);
-    private final Timer timer;
+    private Timer timer;
     private BookReader bookReader;
     private boolean paused;
     private int delay = 1000;
@@ -45,11 +45,31 @@ public class SpeedReader extends JPanel implements ActionListener {
     }
 
     private String chooseBook() {
-        JFileChooser jfc = new JFileChooser(new File(FileSystemView.getFileSystemView().getHomeDirectory(), "Downloads"));
+        JFileChooser jfc = new JFileChooser(
+                new File(
+                        FileSystemView.getFileSystemView().getHomeDirectory(),
+                        "Downloads")
+        );
         jfc.setDialogTitle("Select a book to read");
         jfc.setAcceptAllFileFilterUsed(false);
-        FileNameExtensionFilter fileNameExtensionFilter = new FileNameExtensionFilter("epub files", "epub");
-        jfc.addChoosableFileFilter(fileNameExtensionFilter);
+        FileNameExtensionFilter supportedFilter = new FileNameExtensionFilter(
+                "supported formats", "epub", "txt", "html"
+        );
+        FileNameExtensionFilter epubFilter = new FileNameExtensionFilter(
+                "epub files", "epub"
+        );
+        FileNameExtensionFilter txtFilter = new FileNameExtensionFilter(
+                "txt files", "txt"
+        );
+        FileNameExtensionFilter htmlFilter = new FileNameExtensionFilter(
+                "websites", "html"
+        );
+        jfc.addChoosableFileFilter(supportedFilter);
+        jfc.addChoosableFileFilter(epubFilter);
+        jfc.addChoosableFileFilter(txtFilter);
+        jfc.addChoosableFileFilter(htmlFilter);
+        jfc.setApproveButtonText("Read");
+
         int returnValue = jfc.showOpenDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             return jfc.getSelectedFile().getPath();
@@ -62,7 +82,13 @@ public class SpeedReader extends JPanel implements ActionListener {
         logger.info("Opening book: " + bookFileName);
         this.bookReader = new BookReader(bookFileName);
         setChapter(bookReader.getChapter(this.currChapter));
-        frame.setTitle("SpeedReader: " + this.bookReader.getTitle() + " - chapter " + this.currChapter);
+        frame.setTitle(
+                "SpeedReader: "
+                        + this.bookReader.getTitle()
+                        + " - chapter " + this.currChapter
+        );
+        if(timer!=null)
+            setPaused(true);
     }
 
     public SpeedReader(String bookFileName, int speed) {
@@ -100,9 +126,7 @@ public class SpeedReader extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(!isPaused()) {
-            chapter.next(this);
-        }
+        chapter.next(this);
     }
 
     public void nextChapter(int i) {
@@ -111,6 +135,7 @@ public class SpeedReader extends JPanel implements ActionListener {
         logger.info("Current chapter: " + this.currChapter);
         frame.setTitle(bookReader.getTitle() + " - " + this.chapter.getTitle());
         chapter.restart();
+        setPaused(true);
     }
 
     public boolean isPaused() {
@@ -119,6 +144,12 @@ public class SpeedReader extends JPanel implements ActionListener {
 
     public void setPaused(boolean paused) {
         this.paused = paused;
+        if(paused) {
+            timer.stop();
+        } else {
+            timer.start();
+            actionPerformed(null);
+        }
     }
 
     public static void main(String[] args) {
