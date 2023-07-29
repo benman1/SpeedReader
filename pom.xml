@@ -17,6 +17,14 @@
                     <target>7</target>
                 </configuration>
             </plugin>
+	    <plugin>
+	        <groupId>org.codehaus.mojo</groupId>
+	        <artifactId>exec-maven-plugin</artifactId>
+	        <version>1.2.1</version>
+	        <configuration>
+                    <mainClass>SpeedReader</mainClass>
+	        </configuration>
+	    </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
