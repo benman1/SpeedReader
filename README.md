@@ -13,6 +13,15 @@ Reads epub files and presents the text in a given chapter at a given speed (word
 ## Installation and running
 Compile in maven. Give optional command line arguments for book and initial speed.
 
+You need to have OpenJDK and Maven installed.
+
+You can compile and execute the app with maven like this:
+```bash
+mvn exec:java
+```
+
+This should bring up a file selector, where you can choose an EPUB file to load. Depending on the book structure, you might have to skip the cover and table of contents to get to the main content.
+
 ## Commands
 Keyboard commands are as follows:
 * pause - space bar
