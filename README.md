@@ -2,6 +2,8 @@
 
 Reads epub files and presents the text in a given chapter at a given speed (words per minute) at a focal point.
 
+![](resources/screenshot.png)
+
 ## Features
 * Reads epub, txt and html formats
 * displays words at variable frequencies
